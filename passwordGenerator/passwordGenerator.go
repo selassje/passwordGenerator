@@ -1,4 +1,4 @@
-package main
+package passwordGenerator
 
 import (
 	"fmt"
@@ -10,16 +10,16 @@ import (
 type Settings struct {
 	Length                  int
 	IncludeUpperCaseLetters bool
-	IncludeLowerCaseLetter  bool
+	IncludeLowerCaseLetters bool
 	IncludeDigits           bool
 	IncludeSymbols          bool
 }
 
-func validateSettings(settings *Settings) (err error) {
+func ValidateSettings(settings *Settings) (err error) {
 	if settings.Length == 0 {
 		err = fmt.Errorf("Password length can't be zero")
 	}
-	if !(settings.IncludeSymbols || settings.IncludeLowerCaseLetter || settings.IncludeDigits || settings.IncludeUpperCaseLetters) {
+	if !(settings.IncludeSymbols || settings.IncludeLowerCaseLetters || settings.IncludeDigits || settings.IncludeUpperCaseLetters) {
 		err = fmt.Errorf("At least one criterion has to be set")
 	}
 	return
@@ -28,7 +28,7 @@ func validateSettings(settings *Settings) (err error) {
 func getValidChars(settings *Settings) (validChars []byte) {
 	var c byte
 	for c = 0; c < 128; c++ {
-		if unicode.IsLower(rune(c)) && settings.IncludeLowerCaseLetter ||
+		if unicode.IsLower(rune(c)) && settings.IncludeLowerCaseLetters ||
 			unicode.IsUpper(rune(c)) && settings.IncludeUpperCaseLetters ||
 			unicode.IsDigit(rune(c)) && settings.IncludeDigits ||
 			unicode.IsSymbol(rune(c)) && settings.IncludeSymbols {
@@ -38,7 +38,7 @@ func getValidChars(settings *Settings) (validChars []byte) {
 	return
 }
 
-func generatePassword(settings *Settings) []rune {
+func GeneratePassword(settings *Settings) []rune {
 	password := make([]rune, settings.Length)
 	rand.Seed(time.Now().UTC().UnixNano())
 	validChars := getValidChars(settings)
@@ -49,18 +49,3 @@ func generatePassword(settings *Settings) []rune {
 	return password
 }
 
-func main() {
-	settings := Settings{
-		Length:                  32,
-		IncludeUpperCaseLetters: true,
-		IncludeLowerCaseLetter:  true,
-		IncludeDigits:           true,
-		IncludeSymbols:          true,
-	}
-	err := validateSettings(&settings)
-	if err != nil {
-		panic(err.Error())
-	}
-	password := generatePassword(&settings)
-	fmt.Println(string(password))
-}
