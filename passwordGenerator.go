@@ -42,7 +42,6 @@ func generatePassword(settings *Settings) []rune {
 	password := make([]rune, settings.Length)
 	rand.Seed(time.Now().UTC().UnixNano())
 	validChars := getValidChars(settings)
-	fmt.Println(validChars)
 	for i := 0; i < settings.Length; i++ {
 		randomIndex := rand.Intn(len(validChars))
 		password[i] = rune(validChars[randomIndex])
@@ -56,7 +55,7 @@ func main() {
 		IncludeUpperCaseLetters: true,
 		IncludeLowerCaseLetter:  true,
 		IncludeDigits:           true,
-		IncludeSymbols:          false,
+		IncludeSymbols:          true,
 	}
 	err := validateSettings(&settings)
 	if err != nil {
